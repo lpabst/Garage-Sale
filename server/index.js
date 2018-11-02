@@ -13,7 +13,12 @@ app.use(bodyParser.json());
 
 app.use(express.static(__dirname + './../build'))
 
-const userController = require("./userController.js");
+const adminController = require("./controllers/admin.js");
+const cashierController = require("./controllers/cashier.js");
+const dealerController = require("./controllers/dealer.js");
+const loginController = require("./controllers/login.js");
+const reportsController = require("./controllers/reports.js");
+const userController = require("./controllers/user.js");
 
 //////////Endpoints for the front end
 
