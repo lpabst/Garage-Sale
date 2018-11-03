@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const massive = require('massive');
 const app = module.exports = express();
 const config = require('./config.js');
+const { authenticate } = require('./util/auth');
 
 app.use(bodyParser.json());
 
@@ -22,43 +23,53 @@ const loginController = require("./controllers/login.js");
 const reportsController = require("./controllers/reports.js");
 const userController = require("./controllers/user.js");
 
+// current idea: use numbers to indicate access level, 
+// outsource the access level check to an authenticate function.
+// 1 = dealer
+// 5 = cashier
+// 10 = admin
+// ***NOTE - some endpoints will require additional permission checks above and beyond
+// access level. For instance, updating an item listing we would need to also check that
+// the person updating it is the owner of the listing, etc... 
+
 //Endpoints for the front end
-app.put('/api/payDealer', adminController.payDealer);
+app.put('/api/payDealer', authenticate(adminController.payDealer, 10));
 
-app.get('/api/getCartForCashier', cartController.getCartForCashier);
-app.put('/api/addItemToCart', cartController.addItemToCart);
-app.delete('/api/deleteItemFromCart', cartController.deleteItemFromCart);
-app.delete('/api/emptyCartEntirely', cartController.emptyCartEntirely);
+app.get('/api/getCartForCashier', authenticate(cartController.getCartForCashier, 5));
+app.put('/api/addItemToCart', authenticate(cartController.addItemToCart, 5));
+app.delete('/api/deleteItemFromCart', authenticate(cartController.deleteItemFromCart, 5));
+app.delete('/api/emptyCartEntirely', authenticate(cartController.emptyCartEntirely, 5));
 
-app.get('/api/getCashierById', cashierController.getCashierById);
-app.get('/api/allCashiers', cashierController.allCashiers);
-app.put('/api/updateCashier', cashierController.updateCashier);
-app.post('/api/createCashier', cashierController.createCashier);
-app.delete('/api/deleteCashier', cashierController.deleteCashier);
+app.get('/api/getCashierById', authenticate(cashierController.getCashierById, 5));
+app.get('/api/allCashiers', authenticate(cashierController.allCashiers, 10));
+app.put('/api/updateCashier', authenticate(cashierController.updateCashier, 5));
+app.post('/api/createCashier', authenticate(cashierController.createCashier, 10));
+app.delete('/api/deleteCashier', authenticate(cashierController.deleteCashier, 5));
 
-app.get('/api/getDealerById', dealerController.getDealerById);
-app.get('/api/allDealers', dealerController.allDealers);
-app.put('/api/updateDealer', dealerController.updateDealer);
-app.post('/api/createDealer', dealerController.createDealer);
-app.delete('/api/deleteDealer', dealerController.deleteDealer);
+app.get('/api/getDealerById', authenticate(dealerController.getDealerById, 1));
+app.get('/api/allDealers', authenticate(dealerController.allDealers, 10));
+app.put('/api/updateDealer', authenticate(dealerController.updateDealer, 1));
+app.post('/api/createDealer', authenticate(dealerController.createDealer, 1));
+app.delete('/api/deleteDealer', authenticate(dealerController.deleteDealer, 1));
 
-app.get('/api/getItemById', itemController.getItemById);
-app.get('/api/allItemsForDealer', itemController.allItemsForDealer);
-app.put('/api/updateItemListing', itemController.updateItemListing);
-app.post('/api/createItemListing', itemController.createItemListing);
-app.delete('/api/deleteItemListing', itemController.deleteItemListing);
+app.get('/api/getItemById', authenticate(itemController.getItemById, 1));
+app.get('/api/allItemsForDealer', authenticate(itemController.allItemsForDealer, 1));
+app.put('/api/updateItemListing', authenticate(itemController.updateItemListing, 1));
+app.post('/api/createItemListing', authenticate(itemController.createItemListing, 1));
+app.delete('/api/deleteItemListing', authenticate(itemController.deleteItemListing, 1));
 
+// some endpoints we don't want an access level to use
 app.post('/api/login', loginController.login);
 app.post('/api/logout', loginController.logout);
 app.post('/api/forgotPassword', loginController.forgotPassword);
 
-app.get('/api/salesReport', reportsController.salesReport);
+app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
-app.get('/api/getUserById', userController.getUserById);
-app.get('/api/allUsers', userController.allUsers);
-app.put('/api/updateUser', userController.updateUser);
+app.get('/api/getUserById', authenticate(userController.getUserById, 1));
+app.get('/api/allUsers', authenticate(userController.allUsers, 10));
+app.put('/api/updateUser', authenticate(userController.updateUser, 1));
 app.post('/api/createUser', userController.createUser);
-app.delete('/api/deleteUser', userController.deleteUser);
+app.delete('/api/deleteUser', authenticate(userController.deleteUser, 1));
 
 
 
