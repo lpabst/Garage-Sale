@@ -5,7 +5,9 @@ function getUserIdFromSessionCookie(sessionCookie){
     return sessionCookie
 }
 
-// If we use numbers to indicate access level in conjunction with 
+// This function finds the userId stored in the sessionCookie, 
+// and checks if they have the required access level to contine
+// *NOTE: If we use numbers to indicate access level in conjunction with 
 // userType, it makes checking permissions really easy
 function authenticate(callback, accessLevel){
     return (req, res, next) => {
