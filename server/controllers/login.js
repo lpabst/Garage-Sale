@@ -1,4 +1,4 @@
-const { createSessionCookie, SESSION_COOKIE_NAME } = require('./../util/session');
+const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 const { hashPassword } = require('../util/helpers')
 
 // find user by email/password if they exist 
@@ -8,18 +8,12 @@ const { hashPassword } = require('../util/helpers')
 function login(req, res) {
     let db = req.app.get('db');
     let { email, password } = req.body;
-    // **We need to hash the password here and when they create an account
     password = hashPassword(password);
     return db.users.find({ email, password })
         .then(arr => arr[0] || res.status(200).send({ error: true, message: 'Invalid username or password' }))
-        .then(user => {
-            let sessionCookie = createSessionCookie();
-            res.cookie(SESSION_COOKIE_NAME, sessionCookie, { httpOnly: true });
-            return db.users.update({ id: user.id }, { session_cookie: sessionCookie })
-                .then(() => res.status(200).send({ error: false, message: 'Successful login', data: user }))
-        })
-        .catch(e => res.status(200).send({ error: true, message: e, location: 'login' })
-        )
+        .then(user => createSession(db, res, user.id))
+        .then(userWithSession => res.status(200).send({ error: false, message: 'Successful login', data: userWithSession }))
+        .catch(e => res.status(200).send({ error: true, message: e.stack, location: 'login' }))
 }
 
 // find user that has this session cookie, and update it to null

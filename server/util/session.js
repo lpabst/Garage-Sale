@@ -11,7 +11,15 @@ function createSessionCookie() {
     return randomString;
 }
 
+function createSession(db, res, id) {
+    let sessionCookie = createSessionCookie();
+    res.cookie(SESSION_COOKIE_NAME, sessionCookie, { httpOnly: true });
+    return db.users.update({ id }, { session_cookie: sessionCookie })
+        .then(arr => arr[0])
+}
+
 module.exports = {
     SESSION_COOKIE_NAME,
-    createSessionCookie
+    createSessionCookie,
+    createSession
 }

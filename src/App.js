@@ -15,9 +15,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.post('/api/login', {
-      email: 'test@gmail.com',
-      password: 'testPassword88'
+    axios.post('/api/createUser', {
+      email: 'test5@gmail.com',
+      password: 'testPassword97'
     })
       .then(res => {
         console.log(res)
