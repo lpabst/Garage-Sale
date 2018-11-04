@@ -1,0 +1,19 @@
+create table users(
+    id serial primary key,
+    email text not null,
+    password text not null,
+    user_type text,
+    access_level integer
+    session_cookie text
+)
+
+-- Makes the new users table start the serial at 1000000 instead of 1
+ALTER SEQUENCE users_id_seq RESTART WITH 1000000;
+
+insert into users(email, password, user_type, access_level)
+values ('test@gmail.com', '******', 'admin', 10)
+
+
+
+
+

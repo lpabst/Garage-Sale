@@ -1,5 +1,5 @@
 
-function parseCookies(cookieString){
+function parseCookies(cookieString) {
     let parsedCookies = {};
     cookieString && cookieString.split(';').forEach(cookie => {
         var parts = cookie.split('=');
@@ -8,6 +8,12 @@ function parseCookies(cookieString){
     return parsedCookies
 }
 
+// TO-DO actually hash the password lol
+function hashPassword(password) {
+    return password
+}
+
 module.exports = {
-    parseCookies
+    parseCookies,
+    hashPassword
 }

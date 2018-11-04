@@ -1,16 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const massive = require('massive');
+const cookieParser = require('cookie-parser');
 const app = module.exports = express();
 const config = require('./config.js');
 const { authenticate } = require('./util/auth');
+const { parseCookies } = require('./util/helpers')
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 massive(config.connection)
-.then( db => {
-  app.set('db', db);
-})
+  .then(db => {
+    app.set('db', db);
+  })
 
 app.use(express.static(__dirname + './../build'))
 
@@ -37,6 +40,7 @@ app.put('/api/payDealer', authenticate(adminController.payDealer, 10));
 
 app.get('/api/getCartForCashier', authenticate(cartController.getCartForCashier, 5));
 app.put('/api/addItemToCart', authenticate(cartController.addItemToCart, 5));
+app.post('/api/checkout', authenticate(cartController.checkout, 5));
 app.delete('/api/deleteItemFromCart', authenticate(cartController.deleteItemFromCart, 5));
 app.delete('/api/emptyCartEntirely', authenticate(cartController.emptyCartEntirely, 5));
 
@@ -58,7 +62,7 @@ app.put('/api/updateItemListing', authenticate(itemController.updateItemListing,
 app.post('/api/createItemListing', authenticate(itemController.createItemListing, 1));
 app.delete('/api/deleteItemListing', authenticate(itemController.deleteItemListing, 1));
 
-// some endpoints we don't want an access level to use
+// some endpoints we want to use without an access level
 app.post('/api/login', loginController.login);
 app.post('/api/logout', loginController.logout);
 app.post('/api/forgotPassword', loginController.forgotPassword);
