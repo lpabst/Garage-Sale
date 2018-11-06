@@ -2,6 +2,7 @@ const app = require('./../index.js');
 const { hashPassword } = require('../util/helpers')
 const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 const { sendEmail } = require('../util/sendgrid');
+const config = require('../config');
 const baseDomain = config.baseDomain;
 
 function login(req, res) {
