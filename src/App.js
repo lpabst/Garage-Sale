@@ -15,7 +15,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.post('/api/createUser', {
+    axios.post('/api/forgotPassword', {
       email: 'test5@gmail.com',
       password: 'testPassword97'
     })

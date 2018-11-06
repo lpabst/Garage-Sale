@@ -22,7 +22,6 @@ const cartController = require("./controllers/cart.js");
 const cashierController = require("./controllers/cashier.js");
 const dealerController = require("./controllers/dealer.js");
 const itemController = require("./controllers/item.js");
-const loginController = require("./controllers/login.js");
 const reportsController = require("./controllers/reports.js");
 const userController = require("./controllers/user.js");
 
@@ -62,19 +61,17 @@ app.put('/api/updateItemListing', authenticate(itemController.updateItemListing,
 app.post('/api/createItemListing', authenticate(itemController.createItemListing, 1));
 app.delete('/api/deleteItemListing', authenticate(itemController.deleteItemListing, 1));
 
-// some endpoints we want to use without an access level
-app.post('/api/login', loginController.login);
-app.post('/api/logout', loginController.logout);
-app.post('/api/forgotPassword', loginController.forgotPassword);
-
 app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
+// some endpoints we want to use without an access level
+app.post('/api/login', userController.login);
+app.post('/api/logout', userController.logout);
+app.post('/api/forgotPassword', userController.forgotPassword);
 app.get('/api/getUserById', authenticate(userController.getUserById, 1));
 app.get('/api/allUsers', authenticate(userController.allUsers, 10));
 app.put('/api/updateUser', authenticate(userController.updateUser, 1));
 app.post('/api/createUser', userController.createUser);
 app.delete('/api/deleteUser', authenticate(userController.deleteUser, 1));
-
-
+app.delete('/api/updatePermissions', authenticate(userController.updatePermissions, 10));
 
 app.listen(config.port, console.log("you are now connected on " + config.port));
