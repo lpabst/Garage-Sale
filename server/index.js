@@ -64,10 +64,10 @@ app.delete('/api/deleteItemListing', authenticate(itemController.deleteItemListi
 app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
 // some endpoints we want to use without an access level
-app.get('/api/getUserById', authenticate(userController.getUserById, 1));
 app.get('/api/allUsers', authenticate(userController.allUsers, 10));
-app.put('/api/updateUser', authenticate(userController.updateUser, 1));
-app.put('/api/updatePermissions', authenticate(userController.updatePermissions, 10));
+app.post('/api/updateUser', authenticate(userController.updateUser, 1));
+app.post('/api/updatePermissions', authenticate(userController.updatePermissions, 10));
+app.post('/api/getUserById', authenticate(userController.getUserById, 1));
 app.post('/api/createUser', userController.createUser);
 app.post('/api/login', userController.login);
 app.post('/api/logout', userController.logout);
