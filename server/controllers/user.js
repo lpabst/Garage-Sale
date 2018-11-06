@@ -4,12 +4,7 @@ const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 const { sendEmail } = require('../util/email');
 const config = require('../config');
 const baseDomain = config.baseDomain;
-
-function getUserById(req, res) {
-    let db = req.app.get('db');
-    let { id } = req.body;
-    return db.users.find({ id })
-}
+const { sendSuccess, sendFailure, sendError } = require('../util/helpers');
 
 // we can paginate this if we want
 function allUsers(req, res) {
@@ -19,14 +14,27 @@ function allUsers(req, res) {
 function updateUser(req, res) {
     let db = req.app.get('db');
     let { id, updates } = req.body;
-    // TO-DO check permission here to see if user is updating themself or someone else (or if it's an admin)
-    // i.e. get the logged in user info by session cookie and see if they are an admin, or if they are editing themself
+    let loggedInUser = req.session.user;
+
+    // keeps someone that's not an admin from doing things they shouldn't
+    if (loggedInUser.access_level < 10) {
+        if (loggedInUser.id !== id)
+            return sendFailure(res, 'Cannot edit another user');
+        delete updates.access_level;
+        delete updates.user_type;
+    }
+
     return db.users.update({ id }, updates)
+        .then(user => sendSuccess(res, user[0]))
+        .catch(e => sendError(res, e))
 }
 
-// Used to add/revome someone's cashier priviledges
-function updatePermissions(req, res) {
-
+function getUserById(req, res) {
+    let db = req.app.get('db');
+    let { id } = req.body;
+    return db.users.find({ id })
+        .then(user => sendSuccess(res, user[0]))
+        .catch(e => sendError(res, e))
 }
 
 function createUser(req, res) {
@@ -36,12 +44,13 @@ function createUser(req, res) {
     return db.users.find({ email })
         .then(alreadyExists => {
             if (alreadyExists[0])
-                return res.status(200).send({ error: true, message: 'That email is already in use' });
-            else return 'moving to next .then';
+                return sendFailure(res, 'That email is already in use');
+            else
+                return db.users.insert({ email, password, user_type: 'dealer', access_level: 1 })
+                    .then(user => createSession(db, res, user.id))
+                    .then(userWithSession => sendSuccess(res, userWithSession))
         })
-        .then(() => db.users.insert({ email, password, user_type: 'dealer', access_level: 1 }))
-        .then(user => createSession(db, res, user.id))
-        .then(userWithSession => res.status(200).send({ error: false, message: 'Successfully created account', data: userWithSession }))
+        .catch(e => sendError(res, e));
 }
 
 function login(req, res) {
@@ -50,7 +59,7 @@ function login(req, res) {
 
 function logout(req, res) {
     res.clearCookie(SESSION_COOKIE_NAME);
-    return res.status(200).send({ error: false, message: 'Logged user out successfully' });
+    return sendSuccess(res, null, 'Logged user out successfully');
 }
 
 function forgotPassword(req, res) {
@@ -63,11 +72,12 @@ function forgotPassword(req, res) {
     }
 
     return sendEmail(email)
-        .then(({ error, message }) => {
-            if (error) return res.status(200).send({ error: true, message })
-            return res.status(200).send({ error: false, message: 'Sent password reset email to the email address on file' })
+        .then(({ error, success, message }) => {
+            if (error) return sendError(res, error, 'transporter.sendMail');
+            if (!error && !success) return sendFailure(res, message);
+            return sendSuccess(res, null, 'Sent password reset email to the email address on file')
         })
-        .catch(e => res.status(200).send({ error: true, message: e.stack, location: 'forgot password' }))
+        .catch(e => sendError(res, e, 'sendEmail'))
 }
 
 function deleteUser(req, res) {
@@ -78,7 +88,6 @@ module.exports = {
     getUserById,
     allUsers,
     updateUser,
-    updatePermissions,
     createUser,
     login,
     logout,

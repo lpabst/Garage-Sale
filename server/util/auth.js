@@ -1,4 +1,5 @@
-const { parseCookies } = require('.//helpers');
+const { sendFailure, sendError } = require('./helpers');
+const { SESSION_COOKIE_NAME } = require('./session');
 
 // we need to make this more sophisticated to hide the userId in the cookie
 function getUserIdFromSessionCookie(sessionCookie) {
@@ -12,20 +13,19 @@ function getUserIdFromSessionCookie(sessionCookie) {
 function authenticate(callback, accessLevel) {
     return (req, res, next) => {
         let db = req.app.get('db');
-        let sessionCookie = req.cookies.sessionCookie;
+        let sessionCookie = req.cookies[SESSION_COOKIE_NAME];
         return db.users.find({ session_cookie: sessionCookie })
-            .then(arr => arr[0] || res.status(200).send({ error: true, message: 'Invalid session cookie. Please log in' }))
-            .then(user => {
-                req.user = user;
-                if (user.accessLevel >= accessLevel)
-                    return callback(req, res, next);
-                else
-                    return res.status(200).send({ error: true, message: 'User lacks proper permissions' })
+            .then(arr => {
+                let user = arr[0];
+                if (!user)
+                    return sendFailure(res, 'Invalid session cookie. Please log in');
+                if (user.access_level < accessLevel)
+                    return sendFailure(res, 'The user lacks the proper permissions');
+                req.session = { user }
+                return callback(req, res, next);
+
             })
-            .catch(e => {
-                console.log(e);
-                return res.status(200).send({ error: true, message: e, location: 'authenticate' })
-            })
+            .catch(e => sendError(res, e, 'authenticate'))
     }
 }
 

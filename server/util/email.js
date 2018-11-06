@@ -8,13 +8,13 @@ const transporter = nodemailer.createTransport({
 function sendEmail(email) {
     let { to, subject, text } = email;
     if (!to || !subject || !text)
-        return { error: true, message: 'To send email, please include toAddress, subject, and text' }
+        return { error: false, success: false, message: 'To send email, please include toAddress, subject, and text' }
     return new Promise((resolve, reject) => {
         transporter.sendMail(email, function (error, info) {
             if (error) {
-                return reject({ error: true, Error: error, message: error.stack })
+                return reject({ error: true, success: false, Error: error, message: error.stack })
             } else {
-                return resolve({ error: false, message: 'Success' })
+                return resolve({ error: false, success: true, message: 'Success' })
             }
         });
     })

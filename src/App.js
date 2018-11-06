@@ -15,9 +15,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.post('/api/forgotPassword', {
-      email: 'test5@gmail.com',
-      password: 'testPassword97'
+    axios.post('/api/updateUser', {
+      id: 1000002,
+      updates: {
+        email: 'test2@gmail.com',
+        password: 'newPasswordTest'
+      },
+      email: 'test2@gmail.com',
+      password: 'testPassword975'
     })
       .then(res => {
         console.log(res)
