@@ -16,7 +16,6 @@ function allUsers(req, res) {
 
 }
 
-
 function updateUser(req, res) {
     let db = req.app.get('db');
     let { id, updates } = req.body;
@@ -24,6 +23,7 @@ function updateUser(req, res) {
     // i.e. get the logged in user info by session cookie and see if they are an admin, or if they are editing themself
     return db.users.update({ id }, updates)
 }
+
 // Used to add/revome someone's cashier priviledges
 function updatePermissions(req, res) {
 
@@ -68,11 +68,9 @@ function forgotPassword(req, res) {
         .catch(e => res.status(200).send({ error: true, message: e.stack, location: 'forgot password' }))
 }
 
-
 function deleteUser(req, res) {
     // only an admin can delete someone besides themself
 }
-
 
 module.exports = {
     getUserById,
