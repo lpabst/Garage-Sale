@@ -74,6 +74,4 @@ app.post('/api/createUser', userController.createUser);
 app.delete('/api/deleteUser', authenticate(userController.deleteUser, 1));
 app.delete('/api/updatePermissions', authenticate(userController.updatePermissions, 10));
 
-
-
 app.listen(config.port, console.log("you are now connected on " + config.port));

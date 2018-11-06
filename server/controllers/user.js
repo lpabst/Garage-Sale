@@ -1,9 +1,11 @@
 const app = require('./../index.js');
 const { hashPassword } = require('../util/helpers')
 const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
+const { sendEmail } = require('../util/sendgrid');
+const baseDomain = config.baseDomain;
 
 function login(req, res) {
-    // replace with crypto.js browser cookie stuff
+    // TO-DO replace with crypto.js browser cookie stuff
 }
 
 function logout(req, res) {
@@ -12,7 +14,18 @@ function logout(req, res) {
 }
 
 function forgotPassword(req, res) {
+    // we'll need to get this off of req.session
+    let userEmail = 'lorenpabst@gmail.com';
+    // we'll have to do some work to get this thing working right
+    let html = `
+        <h1>Password Reset</h1>
+        <p>Use this link to reset your password. This link is only active for 24 hours: <a href="${baseDomain}/passwordReset">password reset link</a></p>
+        <p>Opt out link: <a href="${baseDomain}/optout">Opt Out</a></p>
+    `;
 
+    return sendEmail(userEmail, 'Password Reset', html)
+        .then(({ error, message }) => res.status(200).send({ error: false, message: 'Sent password reset email to the email address on file' }))
+        .catch(e => res.status(200).send({ error: true, message: e.stack, location: 'forgot password' }))
 }
 
 function getUserById(req, res) {
