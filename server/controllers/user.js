@@ -2,6 +2,19 @@ const app = require('./../index.js');
 const { hashPassword } = require('../util/helpers')
 const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 
+function login(req, res) {
+    // replace with crypto.js browser cookie stuff
+}
+
+function logout(req, res) {
+    res.clearCookie(SESSION_COOKIE_NAME);
+    return res.status(200).send({ error: false, message: 'Logged user out successfully' });
+}
+
+function forgotPassword(req, res) {
+
+}
+
 function getUserById(req, res) {
     let db = req.app.get('db');
     let { id } = req.body;
@@ -40,7 +53,15 @@ function deleteUser(req, res) {
 
 }
 
+// Used to add/revome someone's cashier priviledges
+function updatePermissions(req, res) {
+
+}
+
 module.exports = {
+    login,
+    logout,
+    forgotPassword,
     getUserById,
     allUsers,
     updateUser,
