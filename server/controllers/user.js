@@ -1,7 +1,7 @@
 const app = require('./../index.js');
 const { hashPassword } = require('../util/helpers')
 const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
-const { sendEmail } = require('../util/sendgrid');
+const { sendEmail } = require('../util/email');
 const config = require('../config');
 const baseDomain = config.baseDomain;
 
@@ -54,17 +54,19 @@ function logout(req, res) {
 }
 
 function forgotPassword(req, res) {
-    // we'll need to get this off of req.session
-    let userEmail = 'lorenpabst@gmail.com';
-    // we'll have to do some work to get this thing working right
-    let html = `
-        <h1>Password Reset</h1>
-        <p>Use this link to reset your password. This link is only active for 24 hours: <a href="${baseDomain}/passwordReset">password reset link</a></p>
-        <p>Opt out link: <a href="${baseDomain}/optout">Opt Out</a></p>
-    `;
+    let email = {
+        // TO-DO need to get this off of req.session
+        to: 'lorenpabst@gmail.com',
+        subject: 'Password Reset',
+        // TO-DO need to generate a reset link
+        text: `This password reset link is valid for the next 24 hours: ${baseDomain}/passwordReset`
+    }
 
-    return sendEmail(userEmail, 'Password Reset', html)
-        .then(({ error, message }) => res.status(200).send({ error: false, message: 'Sent password reset email to the email address on file' }))
+    return sendEmail(email)
+        .then(({ error, message }) => {
+            if (error) return res.status(200).send({ error: true, message })
+            return res.status(200).send({ error: false, message: 'Sent password reset email to the email address on file' })
+        })
         .catch(e => res.status(200).send({ error: true, message: e.stack, location: 'forgot password' }))
 }
 

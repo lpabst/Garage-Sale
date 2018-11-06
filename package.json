@@ -11,18 +11,18 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@sendgrid/mail": "^6.3.1",
     "atob": "^2.1.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "btoa": "^1.2.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
+    "googleapis": "^27.0.0",
     "massive": "^5.5.1",
+    "nodemailer": "^4.6.8",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
-    "react-router-dom": "^4.3.1",
-    "sendgrid": "^5.2.3"
+    "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
     "prettier": "1.14.3",
