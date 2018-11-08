@@ -15,7 +15,7 @@ function logout(req, res) {
 }
 
 function forgotPassword(req, res) {
-    // we'll need to get this off of req.session
+    // we'll need to get this off of req.session.
     let userEmail = 'lorenpabst@gmail.com';
     // we'll have to do some work to get this thing working right
     let html = `
