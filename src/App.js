@@ -15,13 +15,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.post('/api/updateUser', {
-      id: 1000002,
+    axios.post('/api/login', {
+      id: 1000015,
       updates: {
-        email: 'test2@gmail.com',
+        email: 'test57@gmail.com',
         password: 'newPasswordTest'
       },
-      email: 'test2@gmail.com',
+      email: 'test57@gmail.com',
       password: 'testPassword975'
     })
       .then(res => {

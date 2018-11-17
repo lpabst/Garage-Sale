@@ -6,9 +6,12 @@ const config = require('../config');
 const baseDomain = config.baseDomain;
 const { sendSuccess, sendFailure, sendError } = require('../util/helpers');
 
-// we can paginate this if we want
 function allUsers(req, res) {
-
+    db.query('SELECT * from users')
+        .then(users => sendSuccess(res, users))
+    // we can paginate this if we want
+    // let { cursor, limit } = req.body || null;
+    // db.query(`SELECT * from users limit ${limit} offset ${cursor}`, [])
 }
 
 function updateUser(req, res) {
@@ -47,14 +50,22 @@ function createUser(req, res) {
                 return sendFailure(res, 'That email is already in use');
             else
                 return db.users.insert({ email, password, user_type: 'dealer', access_level: 1 })
-                    .then(user => createSession(db, res, user.id))
-                    .then(userWithSession => sendSuccess(res, userWithSession))
+                    .then(user => createSession(res, user))
         })
         .catch(e => sendError(res, e));
 }
 
 function login(req, res) {
-    // TO-DO replace with crypto.js browser cookie stuff
+    let db = req.app.get('db');
+    let { email, password } = req.body;
+    password = hashPassword(password);
+    return db.users.find({ email, password })
+        .then(matchingRecords => {
+            if (matchingRecords[0])
+                return createSession(res, matchingRecords[0])
+            else
+                return sendFailure(res, 'Invalid username or password')
+        })
 }
 
 function logout(req, res) {
@@ -63,15 +74,16 @@ function logout(req, res) {
 }
 
 function forgotPassword(req, res) {
-    let email = {
-        // TO-DO need to get this off of req.session
-        to: 'lorenpabst@gmail.com',
+    let { email } = req.session.user;
+    if (!email) return sendFailure(res, 'We dont seem to have a valid email on file. Please contact customer support')
+    let emailBuild = {
+        to: email,
         subject: 'Password Reset',
         // TO-DO need to generate a reset link
         text: `This password reset link is valid for the next 24 hours: ${baseDomain}/passwordReset`
     }
 
-    return sendEmail(email)
+    return sendEmail(emailBuild)
         .then(({ error, success, message }) => {
             if (error) return sendError(res, error, 'transporter.sendMail');
             if (!error && !success) return sendFailure(res, message);
@@ -81,7 +93,17 @@ function forgotPassword(req, res) {
 }
 
 function deleteUser(req, res) {
-    // only an admin can delete someone besides themself
+    let db = req.app.get('db');
+    let { id } = req.body;
+    let loggedInUser = req.session.user;
+
+    // keeps someone that's not an admin from doing things they shouldn't
+    if (loggedInUser.access_level < 10 && loggedInUser.id !== id) {
+        return sendFailure(res, 'Cannot delete another user');
+    }
+
+    return db.users.destroy({ id })
+        .then(() => logout(req, res))
 }
 
 module.exports = {
