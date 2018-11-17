@@ -40,26 +40,26 @@ app.put('/api/payDealer', authenticate(adminController.payDealer, 10));
 app.get('/api/getCartForCashier', authenticate(cartController.getCartForCashier, 5));
 app.put('/api/addItemToCart', authenticate(cartController.addItemToCart, 5));
 app.post('/api/checkout', authenticate(cartController.checkout, 5));
-app.delete('/api/deleteItemFromCart', authenticate(cartController.deleteItemFromCart, 5));
-app.delete('/api/emptyCartEntirely', authenticate(cartController.emptyCartEntirely, 5));
+app.post('/api/deleteItemFromCart', authenticate(cartController.deleteItemFromCart, 5));
+app.post('/api/emptyCartEntirely', authenticate(cartController.emptyCartEntirely, 5));
 
 app.get('/api/getCashierById', authenticate(cashierController.getCashierById, 5));
 app.get('/api/allCashiers', authenticate(cashierController.allCashiers, 10));
 app.put('/api/updateCashier', authenticate(cashierController.updateCashier, 5));
 app.post('/api/createCashier', authenticate(cashierController.createCashier, 10));
-app.delete('/api/deleteCashier', authenticate(cashierController.deleteCashier, 5));
+app.post('/api/deleteCashier', authenticate(cashierController.deleteCashier, 5));
 
 app.get('/api/getDealerById', authenticate(dealerController.getDealerById, 1));
 app.get('/api/allDealers', authenticate(dealerController.allDealers, 10));
 app.put('/api/updateDealer', authenticate(dealerController.updateDealer, 1));
 app.post('/api/createDealer', authenticate(dealerController.createDealer, 1));
-app.delete('/api/deleteDealer', authenticate(dealerController.deleteDealer, 1));
+app.post('/api/deleteDealer', authenticate(dealerController.deleteDealer, 1));
 
 app.get('/api/getItemById', authenticate(itemController.getItemById, 1));
 app.get('/api/allItemsForDealer', authenticate(itemController.allItemsForDealer, 1));
 app.put('/api/updateItemListing', authenticate(itemController.updateItemListing, 1));
 app.post('/api/createItemListing', authenticate(itemController.createItemListing, 1));
-app.delete('/api/deleteItemListing', authenticate(itemController.deleteItemListing, 1));
+app.post('/api/deleteItemListing', authenticate(itemController.deleteItemListing, 1));
 
 app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
@@ -72,6 +72,6 @@ app.post('/api/createUser', userController.createUser);
 app.post('/api/login', userController.login);
 app.post('/api/logout', userController.logout);
 app.post('/api/forgotPassword', userController.forgotPassword);
-app.delete('/api/deleteUser', authenticate(userController.deleteUser, 1));
+app.post('/api/deleteUser', authenticate(userController.deleteUser, 1));
 
 app.listen(config.port, console.log("you are now connected on " + config.port));
