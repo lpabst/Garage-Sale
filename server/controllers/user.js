@@ -6,9 +6,12 @@ const config = require('../config');
 const baseDomain = config.baseDomain;
 const { sendSuccess, sendFailure, sendError } = require('../util/helpers');
 
-// we can paginate this if we want
 function allUsers(req, res) {
-
+    db.query('SELECT * from users')
+        .then(users => sendSuccess(res, users))
+    // we can paginate this if we want
+    // let { cursor, limit } = req.body || null;
+    // db.query(`SELECT * from users limit ${limit} offset ${cursor}`, [])
 }
 
 function updateUser(req, res) {
