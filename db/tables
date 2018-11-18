@@ -13,7 +13,19 @@ ALTER SEQUENCE users_id_seq RESTART WITH 1000000;
 insert into users(email, password, user_type, access_level)
 values ('test@gmail.com', '******', 'admin', 10)
 
+create table items(
+    id serial primary key,
+    userid integer references users(id),
+    category varchar(255),
+    subcategory varchar(255),
+    description text,
+    price varchar(255),
+    created_date timestamp default NOW(),
+    sold boolean default false,
+    sold_date timestamp
+)
 
-
+insert into items (userid, category, subcategory, description, price)
+values(1000019, 'pants', 'girls ages 5-6', 'lightly used pants', '9.99')
 
 

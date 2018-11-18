@@ -46,6 +46,7 @@ app.post('/api/allCashiers', authenticate(cashierController.allCashiers, 10));
 app.post('/api/createCashier', authenticate(cashierController.createCashier, 10));
 
 app.post('/api/getItemById', authenticate(itemController.getItemById, 1));
+app.post('/api/allItems', authenticate(itemController.allItems, 1));
 app.post('/api/allItemsForDealer', authenticate(itemController.allItemsForDealer, 1));
 app.post('/api/updateItemListing', authenticate(itemController.updateItemListing, 1));
 app.post('/api/createItemListing', authenticate(itemController.createItemListing, 1));

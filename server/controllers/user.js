@@ -25,6 +25,7 @@ function allUsers(req, res) {
             }
             return sendSuccess(res, data);
         })
+        .catch(e => sendError(res, e, 'allUsers'))
 }
 
 // send in an id and an object of attributes to update
@@ -44,7 +45,7 @@ function updateUser(req, res) {
 
     return db.users.update({ id }, updates)
         .then(user => sendSuccess(res, user[0]))
-        .catch(e => sendError(res, e))
+        .catch(e => sendError(res, e, 'updateUser'))
 }
 
 // send in an id
@@ -60,7 +61,7 @@ function getUserById(req, res) {
 
     return db.users.find({ id })
         .then(user => sendSuccess(res, user[0]))
-        .catch(e => sendError(res, e))
+        .catch(e => sendError(res, e, 'getUserById'))
 }
 
 // send in an email and a password
@@ -77,7 +78,7 @@ function createUser(req, res) {
                     .then(user => createSession(req, res, user))
                     .then(userWithSession => sendSuccess(res, userWithSession))
         })
-        .catch(e => sendError(res, e));
+        .catch(e => sendError(res, e, 'createUser'));
 }
 
 // send in an email and a password
@@ -93,6 +94,7 @@ function login(req, res) {
             return createSession(req, res, user)
                 .then(userWithSession => sendSuccess(res, userWithSession))
         })
+        .catch(e => sendError(res, e, 'login'))
 }
 
 function logout(req, res) {
@@ -132,6 +134,7 @@ function deleteUser(req, res) {
 
     return db.users.destroy({ id })
         .then(() => logout(req, res))
+        .catch(e => sendError(res, e, 'deleteUser'))
 }
 
 module.exports = {
