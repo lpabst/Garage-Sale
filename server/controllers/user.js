@@ -6,14 +6,29 @@ const config = require('../config');
 const baseDomain = config.baseDomain;
 const { sendSuccess, sendFailure, sendError } = require('../util/helpers');
 
+// send in a limit and an offset to get a page of results
 function allUsers(req, res) {
-    db.query('SELECT * from users')
-        .then(users => sendSuccess(res, users))
-    // we can paginate this if we want
-    // let { cursor, limit } = req.body || null;
-    // db.query(`SELECT * from users limit ${limit} offset ${cursor}`, [])
+    let db = req.app.get('db');
+    let limit = req.body.limit || 50;
+    let offset = req.body.offset || 0;
+    return db.query(`SELECT * from users limit $1 offset $2`, [limit, offset])
+        .then(users => {
+            let numResults = users.length;
+            let offsetForNextPage = offset + numResults;
+            let offsetForPrevPage = offset - limit;
+            if (offsetForPrevPage < 0) offsetForPrevPage = 0;
+            // If we dont get a full set of results back, we're at the end of the data
+            if (numResults < limit) offsetForNextPage = null;
+            let data = {
+                users,
+                offsetForPrevPage: offsetForPrevPage,
+                offsetForNextPage, offsetForNextPage
+            }
+            return sendSuccess(res, data);
+        })
 }
 
+// send in an id and an object of attributes to update
 function updateUser(req, res) {
     let db = req.app.get('db');
     let { id, updates } = req.body;
@@ -32,6 +47,7 @@ function updateUser(req, res) {
         .catch(e => sendError(res, e))
 }
 
+// send in an id
 function getUserById(req, res) {
     let db = req.app.get('db');
     let { id } = req.body;
@@ -40,6 +56,7 @@ function getUserById(req, res) {
         .catch(e => sendError(res, e))
 }
 
+// send in an email and a password
 function createUser(req, res) {
     let db = req.app.get('db');
     let { email, password } = req.body;
@@ -55,6 +72,7 @@ function createUser(req, res) {
         .catch(e => sendError(res, e));
 }
 
+// send in an email and a password
 function login(req, res) {
     let db = req.app.get('db');
     let { email, password } = req.body;
@@ -92,6 +110,7 @@ function forgotPassword(req, res) {
         .catch(e => sendError(res, e, 'sendEmail'))
 }
 
+// send in an id
 function deleteUser(req, res) {
     let db = req.app.get('db');
     let { id } = req.body;
