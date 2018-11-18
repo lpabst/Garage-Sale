@@ -1,30 +1,17 @@
 const app = require('./../index.js');
 
-function getCashierById(req, res){
-    
-}
-
 // we can paginate this if we want
-function allCashiers(req, res){
+function allCashiers(req, res) {
 
 }
 
-function updateCashier(req, res){
-
-}
-
-function createCashier(req, res){
-
-}
-
-function deleteCashier(req, res){
+// create a user from scratch and makes them a cashier
+// * If they already have an account, the updateUser endpoint can up their permission level
+function createCashier(req, res) {
 
 }
 
 module.exports = {
-    getCashierById,
     allCashiers,
-    updateCashier,
     createCashier,
-    deleteCashier
 }

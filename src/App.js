@@ -15,12 +15,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.post('/api/login', {
+    // axios.post('/api/createUser', {
+    axios.post('/api/allUsers', {
       id: 1000015,
       updates: {
         email: 'test57@gmail.com',
         password: 'newPasswordTest'
       },
+      limit: 2,
+      offset: 2,
       email: 'test57@gmail.com',
       password: 'testPassword975'
     })
