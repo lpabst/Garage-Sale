@@ -15,6 +15,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // axios.post('/api/createUser', {
     axios.post('/api/allUsers', {
       id: 1000015,
       updates: {

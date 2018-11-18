@@ -1,4 +1,3 @@
-const app = require('./../index.js');
 const { hashPassword } = require('../util/helpers')
 const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 const { sendEmail } = require('../util/email');
@@ -34,12 +33,13 @@ function updateUser(req, res) {
     let { id, updates } = req.body;
     let loggedInUser = req.session.user;
 
-    // keeps someone that's not an admin from doing things they shouldn't
     if (loggedInUser.access_level < 10) {
-        if (loggedInUser.id !== id)
-            return sendFailure(res, 'Cannot edit another user');
+        // only an admin can edit access levels
         delete updates.access_level;
         delete updates.user_type;
+        // keeps someone that's not an admin from editing another user
+        if (loggedInUser.id !== id)
+            return sendFailure(res, 'Cannot edit another user');
     }
 
     return db.users.update({ id }, updates)
@@ -51,6 +51,13 @@ function updateUser(req, res) {
 function getUserById(req, res) {
     let db = req.app.get('db');
     let { id } = req.body;
+    let loggedInUser = req.session.user;
+
+    // keeps someone that's not an admin from doing things they shouldn't
+    if (loggedInUser.access_level < 10 && loggedInUser.id !== id) {
+        return sendFailure(res, 'Cannot access another user');
+    }
+
     return db.users.find({ id })
         .then(user => sendSuccess(res, user[0]))
         .catch(e => sendError(res, e))
@@ -67,7 +74,8 @@ function createUser(req, res) {
                 return sendFailure(res, 'That email is already in use');
             else
                 return db.users.insert({ email, password, user_type: 'dealer', access_level: 1 })
-                    .then(user => createSession(res, user))
+                    .then(user => createSession(req, res, user))
+                    .then(userWithSession => sendSuccess(res, userWithSession))
         })
         .catch(e => sendError(res, e));
 }
@@ -79,10 +87,11 @@ function login(req, res) {
     password = hashPassword(password);
     return db.users.find({ email, password })
         .then(matchingRecords => {
-            if (matchingRecords[0])
-                return createSession(res, matchingRecords[0])
-            else
+            let user = matchingRecords[0];
+            if (!user)
                 return sendFailure(res, 'Invalid username or password')
+            return createSession(req, res, user)
+                .then(userWithSession => sendSuccess(res, userWithSession))
         })
 }
 

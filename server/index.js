@@ -42,11 +42,8 @@ app.post('/api/checkout', authenticate(cartController.checkout, 5));
 app.post('/api/deleteItemFromCart', authenticate(cartController.deleteItemFromCart, 5));
 app.post('/api/emptyCartEntirely', authenticate(cartController.emptyCartEntirely, 5));
 
-app.post('/api/getCashierById', authenticate(cashierController.getCashierById, 5));
 app.post('/api/allCashiers', authenticate(cashierController.allCashiers, 10));
-app.post('/api/updateCashier', authenticate(cashierController.updateCashier, 5));
 app.post('/api/createCashier', authenticate(cashierController.createCashier, 10));
-app.post('/api/deleteCashier', authenticate(cashierController.deleteCashier, 5));
 
 app.post('/api/getItemById', authenticate(itemController.getItemById, 1));
 app.post('/api/allItemsForDealer', authenticate(itemController.allItemsForDealer, 1));
@@ -56,10 +53,8 @@ app.post('/api/deleteItemListing', authenticate(itemController.deleteItemListing
 
 app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
-// some endpoints we want to use without an access level
 app.post('/api/allUsers', authenticate(userController.allUsers, 10));
 app.post('/api/updateUser', authenticate(userController.updateUser, 1));
-app.post('/api/updatePermissions', authenticate(userController.updatePermissions, 10));
 app.post('/api/getUserById', authenticate(userController.getUserById, 1));
 app.post('/api/createUser', userController.createUser);
 app.post('/api/login', userController.login);

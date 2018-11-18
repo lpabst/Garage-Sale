@@ -1,4 +1,4 @@
-
+const config = require('./../config');
 
 function hashString(str) {
     var hash = 0, i, chr;
@@ -48,6 +48,28 @@ function sendError(res, err, location = 'default') {
     return res.status(200).send({ error: true, success: false, message: err.stack, data: { location, Error: err } })
 }
 
+function encodeWithSecret(str) {
+    if (!str) return str;
+    let newStr = '';
+    for (let i = 0, j = 0; i < str.length; i++ , j++) {
+        if (j > config.secret.length - 1) j = 0;
+        let encodedCharCode = str.charCodeAt(i) + config.secret.charCodeAt(j);
+        newStr += String.fromCharCode(encodedCharCode);
+    }
+    return newStr;
+}
+
+function decodeWithSecret(str) {
+    if (!str) return str;
+    let newStr = '';
+    for (let i = 0, j = 0; i < str.length; i++ , j++) {
+        if (j > config.secret.length - 1) j = 0;
+        let decodedCharCode = str.charCodeAt(i) - config.secret.charCodeAt(j);
+        newStr += String.fromCharCode(decodedCharCode);
+    }
+    return newStr;
+}
+
 module.exports = {
     parseCookies,
     randomString,
@@ -55,4 +77,6 @@ module.exports = {
     sendSuccess,
     sendFailure,
     sendError,
+    encodeWithSecret,
+    decodeWithSecret,
 }
