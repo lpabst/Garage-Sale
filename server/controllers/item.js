@@ -1,4 +1,4 @@
-const { sendFailure, sendSuccess } = require('./../util/helpers')
+const { sendFailure, sendSuccess, sendError } = require('./../util/helpers')
 
 // send in the id of the dealer 
 // (anyone can see what's for sale, no restrictions - think Amazon)
@@ -84,6 +84,7 @@ function updateItemListing(req, res) {
         .catch(e => sendError(res, e, 'updateItemListing'))
 }
 
+// send in the category, subcategory, description, & price
 function createItemListing(req, res) {
     let db = req.app.get('db');
     let { category, subcategory, description, price } = req.body;
@@ -94,6 +95,7 @@ function createItemListing(req, res) {
         .catch(e => sendError(res, e, 'createItemListing'))
 }
 
+// send in the id of the item to delete
 function deleteItemListing(req, res) {
     let db = req.app.get('db');
     let { id, updates } = req.body;
