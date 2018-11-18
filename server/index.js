@@ -20,7 +20,6 @@ app.use(express.static(__dirname + './../build'))
 const adminController = require("./controllers/admin.js");
 const cartController = require("./controllers/cart.js");
 const cashierController = require("./controllers/cashier.js");
-const dealerController = require("./controllers/dealer.js");
 const itemController = require("./controllers/item.js");
 const reportsController = require("./controllers/reports.js");
 const userController = require("./controllers/user.js");
@@ -49,12 +48,6 @@ app.post('/api/updateCashier', authenticate(cashierController.updateCashier, 5))
 app.post('/api/createCashier', authenticate(cashierController.createCashier, 10));
 app.post('/api/deleteCashier', authenticate(cashierController.deleteCashier, 5));
 
-app.post('/api/getDealerById', authenticate(dealerController.getDealerById, 1));
-app.post('/api/allDealers', authenticate(dealerController.allDealers, 10));
-app.post('/api/updateDealer', authenticate(dealerController.updateDealer, 1));
-app.post('/api/createDealer', authenticate(dealerController.createDealer, 1));
-app.post('/api/deleteDealer', authenticate(dealerController.deleteDealer, 1));
-
 app.post('/api/getItemById', authenticate(itemController.getItemById, 1));
 app.post('/api/allItemsForDealer', authenticate(itemController.allItemsForDealer, 1));
 app.post('/api/updateItemListing', authenticate(itemController.updateItemListing, 1));
@@ -64,7 +57,6 @@ app.post('/api/deleteItemListing', authenticate(itemController.deleteItemListing
 app.get('/api/salesReport', authenticate(reportsController.salesReport, 10));
 
 // some endpoints we want to use without an access level
-app.post('/api/allUsers', userController.allUsers);
 app.post('/api/allUsers', authenticate(userController.allUsers, 10));
 app.post('/api/updateUser', authenticate(userController.updateUser, 1));
 app.post('/api/updatePermissions', authenticate(userController.updatePermissions, 10));

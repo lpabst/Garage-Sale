@@ -6,9 +6,11 @@ function authenticate(callback, accessLevel) {
     return (req, res, next) => {
         let sessionCookie = req.cookies[SESSION_COOKIE_NAME];
         let decodedCookie = decodeWithSecret(sessionCookie);
+        console.log(decodedCookie)
         let user;
         try {
             user = JSON.parse(decodedCookie);
+            console.log(user)
             if (!user.id || !user.access_level)
                 return sendFailure(res, 'Invalid session cookie. Please log in')
             if (user.access_level < accessLevel)
