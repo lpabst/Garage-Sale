@@ -35,6 +35,7 @@ const userController = require("./controllers/user.js");
 
 //Endpoints for the front end
 app.post('/api/payDealer', authenticate(adminController.payDealer, 10));
+app.post('/api/sendCashierInvitedEmail', authenticate(adminController.sendCashierInvitedEmail, 10));
 
 app.post('/api/getCartForCashier', authenticate(cartController.getCartForCashier, 5));
 app.post('/api/addItemToCart', authenticate(cartController.addItemToCart, 5));
