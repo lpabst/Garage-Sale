@@ -3,7 +3,7 @@ const { createSession, SESSION_COOKIE_NAME } = require('./../util/session');
 const { sendEmail } = require('../util/email');
 const config = require('../config');
 const baseDomain = config.baseDomain;
-const { sendSuccess, sendFailure, sendError } = require('../util/helpers');
+const { sendSuccess, sendFailure, sendError, randomString, validateEmail } = require('../util/helpers');
 
 // send in a limit and an offset to get a page of results
 function allUsers(req, res) {
@@ -69,6 +69,10 @@ function createUser(req, res) {
     let db = req.app.get('db');
     let { email, password } = req.body;
     password = hashPassword(password);
+
+    let validEmail = validateEmail(email);
+    if (!validEmail) return sendFailure(res, 'That does not appear to be a valid email address.');
+
     return db.users.find({ email })
         .then(alreadyExists => {
             if (alreadyExists[0])
@@ -103,22 +107,44 @@ function logout(req, res) {
 }
 
 function forgotPassword(req, res) {
-    let { email } = req.session.user;
-    if (!email) return sendFailure(res, 'We dont seem to have a valid email on file. Please contact customer support')
+    let { email } = req.body;
+    if (!email) return sendFailure(res, 'Please send in a valid email address');
+    let resetSecret = randomString(25);
+
     let emailBuild = {
         to: email,
         subject: 'Password Reset',
-        // TO-DO need to generate a reset link
-        text: `This password reset link is valid for the next 24 hours: ${baseDomain}/passwordReset`
+        text: `Use this link to reset your password: ${baseDomain}/passwordReset?rs=${resetSecret}`
     }
 
-    return sendEmail(emailBuild)
-        .then(({ error, success, message }) => {
-            if (error) return sendError(res, error, 'transporter.sendMail');
-            if (!error && !success) return sendFailure(res, message);
-            return sendSuccess(res, null, 'Sent password reset email to the email address on file')
-        })
+    return db.users.update({ email }, { reset_secret: resetSecret })
+        .then(arr => arr[0])
+        .then(userObj => {
+            if (!userObj) return sendFailure(res, 'That email is not in use. Please try again');
+            sendEmail(emailBuild)
+                .then(({ error, success, message }) => {
+                    if (error) return sendError(res, error, 'transporter.sendMail');
+                    if (!error && !success) return sendFailure(res, message);
+                    return sendSuccess(res, null, 'Sent password reset email to the email address on file')
+                })
+        }
+        )
         .catch(e => sendError(res, e, 'sendEmail'))
+}
+
+// send in the email, the reset secret, and the new password
+function resetPasswordWithResetSecret(req, res) {
+    let db = req.app.get('db');
+    let { email, resetSecret, newPassword } = req.body;
+    let password = hashPassword(newPassword);
+    return db.users.update({ email, reset_secret: resetSecret }, { password })
+        .then(arr => arr[0])
+        .then(updatedUser => {
+            if (!updatedUser)
+                return sendFailure(res, 'Invalid email or reset secret. Please request another reset link if needed.')
+            return sendSuccess(res, updatedUser);
+        })
+        .catch(e => sendError(res, e, 'resetPasswordWithResetSecret'))
 }
 
 // send in an id
@@ -145,5 +171,6 @@ module.exports = {
     login,
     logout,
     forgotPassword,
+    resetPasswordWithResetSecret,
     deleteUser
 }
