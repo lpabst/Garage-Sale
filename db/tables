@@ -5,6 +5,7 @@ create table users(
     user_type text,
     access_level integer
     session_cookie text
+    reset_secret text
 )
 
 -- Makes the new users table start the serial at 1000000 instead of 1

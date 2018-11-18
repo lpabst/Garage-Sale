@@ -62,6 +62,7 @@ app.post('/api/createUser', userController.createUser);
 app.post('/api/login', userController.login);
 app.post('/api/logout', userController.logout);
 app.post('/api/forgotPassword', userController.forgotPassword);
+app.post('/api/resetPasswordWithResetSecret', userController.resetPasswordWithResetSecret);
 app.post('/api/deleteUser', authenticate(userController.deleteUser, 1));
 
 app.listen(config.port, console.log("you are now connected on " + config.port));
