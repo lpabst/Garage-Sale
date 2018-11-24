@@ -90,6 +90,10 @@ function login(req, res) {
     let db = req.app.get('db');
     let { email, password } = req.body;
     password = hashPassword(password);
+
+    let validEmail = validateEmail(email);
+    if (!validEmail) return sendFailure(res, 'That does not appear to be a valid email address.');
+
     return db.users.find({ email, password })
         .then(matchingRecords => {
             let user = matchingRecords[0];

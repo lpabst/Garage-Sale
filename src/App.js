@@ -15,6 +15,10 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.test()
+  }
+
+  test() {
     // axios.post('/api/createUser', {
     axios.post('/api/allUsers', {
       id: 1000015,
