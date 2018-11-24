@@ -16,6 +16,7 @@ class Login extends Component {
             showSignUpModal: false
         }
         this.loginOrSignUp = this.loginOrSignUp.bind(this);
+        this.handleLoginResult = this.handleLoginResult.bind(this);
     }
 
     login() {
@@ -28,14 +29,7 @@ class Login extends Component {
             email,
             password
         })
-            .then(({ data }) => {
-                if (data.error || !data.success)
-                    this.setState({ errorMessage: data.message })
-
-                localStorage.email = data.data.email;
-                localStorage.sessionCookie = data.data['session_cookie'];
-                this.props.history.push('/')
-            })
+            .then(this.handleLoginResult)
     }
 
     createAccount() {
@@ -45,16 +39,23 @@ class Login extends Component {
 
         if (password !== confirmPassword) errors += '- Passwords do not match. ';
         if (!validEmail) errors += '- That email address does not appear to be valid. ';
-        if (errors) return this.setState({ errorMessage: 'Passwords do not match' });
+        if (errors) return this.setState({ errorMessage: errors });
 
-        return axios.post('/api/createAccount', {
+        return axios.post('/api/createUser', {
             email,
             password,
             confirmPassword
         })
-            .then(res => {
-                console.log(res)
-            })
+            .then(this.handleLoginResult)
+    }
+
+    handleLoginResult({ data }) {
+        if (data.error || !data.success)
+            return this.setState({ errorMessage: data.message })
+
+        localStorage.email = data.data.email;
+        localStorage.sessionCookie = data.data['session_cookie'];
+        return this.props.history.push('/')
     }
 
     loginOrSignUp() {
