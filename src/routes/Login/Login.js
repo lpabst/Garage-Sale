@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Login.css';
 import axios from 'axios';
 import { validateEmail } from './../../util/helpers';
-import Header from './../Header/Header';
+import Header from './../../components/Header/Header';
 import { withRouter } from 'react-router-dom'
 
 class Login extends Component {

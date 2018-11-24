@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Header.css'
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+import axios from 'axios';
 
 class Header extends Component {
 
@@ -12,6 +13,7 @@ class Header extends Component {
 
         this.getUserEmail = this.getUserEmail.bind(this);
         this.navList = this.navList.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
@@ -20,8 +22,19 @@ class Header extends Component {
 
     getUserEmail() {
         this.setState({
-            userEmail: localStorage['email']
+            userEmail: localStorage['email'] || ''
         })
+    }
+
+    logout() {
+        axios.post('/api/logout')
+            .then(({ data }) => {
+                if (data.success) {
+                    delete localStorage.email;
+                    delete localStorage.sessionCookie;
+                }
+                this.props.history.push('/login')
+            })
     }
 
     navList() {
@@ -31,6 +44,7 @@ class Header extends Component {
             <ul className='nav-list'>
                 <li><Link to='/profile' >Profile</Link></li>
                 <li><Link to='/account' >Account</Link></li>
+                <li onClick={this.logout} >Logout</li>
             </ul>
             :
             <ul className='nav-list'>
@@ -49,4 +63,4 @@ class Header extends Component {
 }
 
 
-export default Header;
+export default withRouter(Header);

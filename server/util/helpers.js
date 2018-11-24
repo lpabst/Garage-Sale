@@ -35,7 +35,7 @@ function hashPassword(password) {
 }
 
 // nicely formatted responses every time
-function sendSuccess(res, data = null, message = 'Success') {
+function sendSuccess(res, data = {}, message = 'Success') {
     delete data.password;
     return res.status(200).send({ error: false, success: true, message, data });
 }

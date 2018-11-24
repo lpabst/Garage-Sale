@@ -30,9 +30,12 @@
     min-width: 60px;
     color: white;
     text-align: center;
-    padding-top: 20px;
+    padding: 20px 10px 0px 10px;
     cursor: pointer;
-    margin-right: 20px;
+}
+
+.nav-list li:hover{
+    background: rgb(44, 36, 36);
 }
 
 .nav-list a{

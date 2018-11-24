@@ -107,7 +107,7 @@ function login(req, res) {
 
 function logout(req, res) {
     res.clearCookie(SESSION_COOKIE_NAME);
-    return sendSuccess(res, null, 'Logged user out successfully');
+    return sendSuccess(res, {}, 'Logged user out successfully');
 }
 
 function forgotPassword(req, res) {
