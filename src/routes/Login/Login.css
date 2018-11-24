@@ -19,13 +19,6 @@
     margin: 8px auto;
 }
 
-.input-wrapper input{
-    width: 270px;
-    font-size: 14px;
-    padding-left: 5px;
-    margin-top: 1px;
-}
-
 .input-wrapper button{
     width: 160px;
     height: 30px;
@@ -51,12 +44,6 @@
     font-size: 16px;
     background: rgb(136, 228, 113);
     margin-top: 5px;
-}
-
-.error-message{
-    color: red;
-    font-size: 12px;
-    margin: 5px 0px;
 }
 
 

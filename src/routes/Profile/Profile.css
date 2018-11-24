@@ -1,0 +1,17 @@
+
+.profile{
+    padding-top: 20px;
+}
+
+.profile-box{
+    width: 300px;
+    min-height: 220px;
+    border: 1px solid black;
+    box-shadow: 2px 2px 2px black;
+    margin: 20px auto;
+    padding: 10px 5px;
+}
+
+.profile-box input{
+    margin-bottom: 8px;
+}

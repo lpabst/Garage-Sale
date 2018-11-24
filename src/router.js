@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { isLoggedIn } from './util/session.js';
 
 import Login from './routes/Login/Login.js';
 import Account from './routes/Account/Account.js';
 import Profile from './routes/Profile/Profile.js';
 
 function forceLogin(Component) {
-    let loggedIn = localStorage['sessionCookie'] && localStorage['email'];
-    return loggedIn
+    return isLoggedIn()
         ? <Component />
         : <Redirect to='/login' />
 }

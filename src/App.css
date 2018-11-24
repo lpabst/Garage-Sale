@@ -9,6 +9,13 @@
   position: relative;
 }
 
+input{
+  width: 270px;
+  font-size: 14px;
+  padding-left: 5px;
+  margin-top: 1px;
+}
+
 .white-text{
   color: white;
 }
@@ -28,3 +35,18 @@
 .blue-text{
   color: blue;
 }
+
+.error-message{
+    color: red;
+    font-size: 12px;
+    margin: 5px 0px;
+}
+
+.success-message{
+    color: green;
+    font-size: 13px;
+    margin: 5px 0px;
+}
+
+
+

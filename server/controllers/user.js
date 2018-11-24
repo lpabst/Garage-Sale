@@ -39,13 +39,35 @@ function updateUser(req, res) {
         delete updates.access_level;
         delete updates.user_type;
         // keeps someone that's not an admin from editing another user
-        if (loggedInUser.id !== id)
+        if (loggedInUser.id != id)
             return sendFailure(res, 'Cannot edit another user');
     }
 
-    return db.users.update({ id }, updates)
-        .then(user => sendSuccess(res, user[0]))
-        .catch(e => sendError(res, e, 'updateUser'))
+    if (updates.password) {
+        updates.password = hashPassword(updates.password);
+    } else {
+        // keeps it from setting a blank password on accident
+        delete updates.password;
+    }
+
+    // if we aren't changing the email, go ahead and make the updates
+    if (!updates.email) {
+        return db.users.update({ id }, updates)
+            .then(user => sendSuccess(res, user[0]))
+            .catch(e => sendError(res, e, 'updateUser'))
+    }
+
+    // otherwise, validate the email and make sure no one else is using it already
+    let validEmail = validateEmail(updates.email);
+    if (!validEmail) return sendFailure(res, 'That does not appear to be a valid email address.');
+    return db.users.find({ email: updates.email })
+        .then(users => users[0])
+        .then(existingAccount => {
+            if (existingAccount) return sendFailure(res, 'That email is already in use.');
+            return db.users.update({ id }, updates)
+                .then(user => sendSuccess(res, user[0]))
+                .catch(e => sendError(res, e, 'updateUser'))
+        })
 }
 
 // send in an id
@@ -55,7 +77,7 @@ function getUserById(req, res) {
     let loggedInUser = req.session.user;
 
     // keeps someone that's not an admin from doing things they shouldn't
-    if (loggedInUser.access_level < 10 && loggedInUser.id !== id) {
+    if (loggedInUser.access_level < 10 && loggedInUser.id != id) {
         return sendFailure(res, 'Cannot access another user');
     }
 
@@ -158,7 +180,7 @@ function deleteUser(req, res) {
     let loggedInUser = req.session.user;
 
     // keeps someone that's not an admin from doing things they shouldn't
-    if (loggedInUser.access_level < 10 && loggedInUser.id !== id) {
+    if (loggedInUser.access_level < 10 && loggedInUser.id != id) {
         return sendFailure(res, 'Cannot delete another user');
     }
 

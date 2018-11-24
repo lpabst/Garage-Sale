@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Header.css'
 import { Link, withRouter } from 'react-router-dom';
 import axios from 'axios';
+import { isLoggedIn } from './../../util/session';
 
 class Header extends Component {
 
@@ -21,9 +22,8 @@ class Header extends Component {
     }
 
     getUserEmail() {
-        this.setState({
-            userEmail: localStorage['email'] || ''
-        })
+        let userEmail = isLoggedIn() ? localStorage['email'] : '';
+        this.setState({ userEmail })
     }
 
     logout() {
@@ -38,8 +38,7 @@ class Header extends Component {
     }
 
     navList() {
-        let isLoggedIn = localStorage['email'] && localStorage['sessionCookie'];
-        return isLoggedIn
+        return isLoggedIn()
             ?
             <ul className='nav-list'>
                 <li><Link to='/profile' >Profile</Link></li>

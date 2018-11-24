@@ -37,8 +37,8 @@ class Login extends Component {
         let validEmail = validateEmail(email);
         let errors = '';
 
-        if (password !== confirmPassword) errors += '- Passwords do not match. ';
-        if (!validEmail) errors += '- That email address does not appear to be valid. ';
+        if (password !== confirmPassword) errors += '- Passwords do not match ';
+        if (!validEmail) errors += '- That email address does not appear to be valid ';
         if (errors) return this.setState({ errorMessage: errors });
 
         return axios.post('/api/createUser', {
@@ -55,6 +55,8 @@ class Login extends Component {
 
         localStorage.email = data.data.email;
         localStorage.sessionCookie = data.data['session_cookie'];
+        localStorage.userId = data.data.id;
+        localStorage.accessLevel = data.data.access_level;
         return this.props.history.push('/')
     }
 
