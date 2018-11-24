@@ -7,18 +7,26 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            userEmail: '',
         }
 
+        this.getUserEmail = this.getUserEmail.bind(this);
     }
 
     componentDidMount() {
+        this.getUserEmail();
+    }
 
+    getUserEmail() {
+        this.setState({
+            userEmail: localStorage['email']
+        })
     }
 
     render() {
         return (
             <section className='header'>
+                <p className={`white-text header-text`} >{this.state.userEmail}</p>
                 <ul className='nav-list'>
                     <li><Link to='/login' >Login</Link></li>
                     <li><Link to='/' >Home</Link></li>

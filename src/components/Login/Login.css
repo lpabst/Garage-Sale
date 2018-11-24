@@ -16,13 +16,41 @@
 
 .input-wrapper{
     width: 280px;
-    margin: 0px auto;
+    margin: 8px auto;
 }
 
 .input-wrapper input{
     width: 270px;
-    font-size: 16px;
+    font-size: 14px;
     padding-left: 5px;
+    margin-top: 1px;
+}
+
+.input-wrapper button{
+    width: 160px;
+    height: 30px;
+    font-size: 16px;
+    background: rgb(0, 223, 19);
+    margin-top: 5px;
+}
+
+.login-signup-switch{
+    width: 280px;
+    border-top: 1px solid gray;
+    margin: 10px auto 0px auto;
+    padding-top: 10px;
+}
+
+.login-signup-switch p{
+    text-align: center;
+}
+
+.login-signup-switch button{
+    width: 200px;
+    height: 30px;
+    font-size: 16px;
+    background: rgb(136, 228, 113);
+    margin-top: 5px;
 }
 
 .error-message{
