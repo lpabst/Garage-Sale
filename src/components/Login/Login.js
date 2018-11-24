@@ -3,13 +3,14 @@ import './Login.css';
 import Axios from 'axios';
 import { validateEmail } from './../../util/helpers';
 import Header from './../Header/Header';
+import { withRouter } from 'react-router-dom'
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: '',
-            password: '',
+            email: 'test@test.com',
+            password: 'test',
             errorMessage: '',
         }
     }
@@ -24,6 +25,14 @@ class Login extends Component {
             email,
             password
         })
+            .then(({ data }) => {
+                if (data.error || !data.success)
+                    this.setState({ errorMessage: data.message })
+
+                localStorage.email = data.data.email;
+                localStorage.sessionCookie = data.data['session_cookie'];
+                this.props.history.push('/')
+            })
     }
 
     render() {
@@ -31,7 +40,7 @@ class Login extends Component {
             <section className="routeWrapper">
                 <Header />
                 <div className='login-box'>
-                    {this.state.errorMessage && <p>{this.state.errorMessage}</p>}
+                    {this.state.errorMessage && <p className='error-message'>{this.state.errorMessage}</p>}
                     <div className='input-wrapper'>
                         <p>Email</p>
                         <input value={this.state.email} onChange={(e) => this.setState({ email: e.target.value })} />
@@ -50,4 +59,4 @@ class Login extends Component {
 }
 
 
-export default Login;
+export default withRouter(Login);

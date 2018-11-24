@@ -19,17 +19,17 @@ class App extends Component {
   }
 
   test() {
-    // axios.post('/api/createUser', {
-    axios.post('/api/allUsers', {
+    axios.post('/api/createUser', {
+      // axios.post('/api/allUsers', {
       id: 1000015,
       updates: {
-        email: 'test57@gmail.com',
-        password: 'newPasswordTest'
+        email: 'test@test.com',
+        password: 'test'
       },
       limit: 2,
       offset: 2,
-      email: 'test57@gmail.com',
-      password: 'testPassword975'
+      email: 'test@test.com',
+      password: 'test'
     })
       .then(res => {
         console.log(res)

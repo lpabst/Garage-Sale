@@ -80,7 +80,7 @@ function createUser(req, res) {
             else
                 return db.users.insert({ email, password, user_type: 'dealer', access_level: 1 })
                     .then(user => createSession(req, res, user))
-                    .then(userWithSession => sendSuccess(res, userWithSession))
+                    .then(userWithSession => sendSuccess(res, userWithSession[0]))
         })
         .catch(e => sendError(res, e, 'createUser'));
 }
@@ -98,9 +98,9 @@ function login(req, res) {
         .then(matchingRecords => {
             let user = matchingRecords[0];
             if (!user)
-                return sendFailure(res, 'Invalid username or password')
+                return sendFailure(res, 'Invalid email or password')
             return createSession(req, res, user)
-                .then(userWithSession => sendSuccess(res, userWithSession))
+                .then(userWithSession => sendSuccess(res, userWithSession[0]))
         })
         .catch(e => sendError(res, e, 'login'))
 }
