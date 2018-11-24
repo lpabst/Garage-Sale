@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './Dealer.css';
-import Header from './../Header/Header';
+import './Profile.css';
+import Header from '../Header/Header';
 
 
-class Dealer extends Component {
+class Profile extends Component {
 
     constructor(props) {
         super(props);
@@ -21,11 +21,11 @@ class Dealer extends Component {
         return (
             <section className='routeWrapper'>
                 <Header />
-                dealer page
+                profile page
             </section>
         );
     }
 }
 
 
-export default Dealer;
+export default Profile;

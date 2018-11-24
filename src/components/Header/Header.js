@@ -11,6 +11,7 @@ class Header extends Component {
         }
 
         this.getUserEmail = this.getUserEmail.bind(this);
+        this.navList = this.navList.bind(this);
     }
 
     componentDidMount() {
@@ -23,15 +24,25 @@ class Header extends Component {
         })
     }
 
+    navList() {
+        let isLoggedIn = localStorage['email'] && localStorage['sessionCookie'];
+        return isLoggedIn
+            ?
+            <ul className='nav-list'>
+                <li><Link to='/profile' >Profile</Link></li>
+                <li><Link to='/account' >Account</Link></li>
+            </ul>
+            :
+            <ul className='nav-list'>
+                <li><Link to='/login' >Login</Link></li>
+            </ul>
+    }
+
     render() {
         return (
             <section className='header'>
                 <p className={`white-text header-text`} >{this.state.userEmail}</p>
-                <ul className='nav-list'>
-                    <li><Link to='/login' >Login</Link></li>
-                    <li><Link to='/' >Home</Link></li>
-                    <li><Link to='/login' >Login</Link></li>
-                </ul>
+                {this.navList()}
             </section >
         );
     }
