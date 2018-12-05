@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './Profile.css';
 import Header from './../../components/Header/Header';
 import axios from 'axios';
-import { validateEmail } from './../../util/helpers';
+import { withRouter } from 'react-router-dom'
+import { validateEmail, checkResponse } from './../../util/helpers';
 
 class Profile extends Component {
 
@@ -28,12 +29,16 @@ class Profile extends Component {
     getUserInfo() {
         let userId = localStorage.userId;
         return axios.post('/api/getUserById', { id: userId })
-            .then(({ data }) => this.setState({
-                id: data.data.id,
-                email: data.data.email,
-                newEmail: data.data.email,
-                password: '*********',
-            }))
+            .then(({ data }) => checkResponse(data, this.props.history))
+            .then(data => {
+                if (!data || !data.data) return;
+                return this.setState({
+                    id: data.data.id,
+                    email: data.data.email,
+                    newEmail: data.data.email,
+                    password: '*********',
+                })
+            })
     }
 
     updateProfile() {
@@ -63,6 +68,7 @@ class Profile extends Component {
                 localStorage.sessionCookie = data.data['session_cookie'];
                 localStorage.userId = data.data.id;
                 localStorage.accessLevel = data.data.access_level;
+                console.log(data);
                 return this.setState({
                     id: data.data.id,
                     email: data.data.email,
@@ -103,4 +109,4 @@ class Profile extends Component {
 }
 
 
-export default Profile;
+export default withRouter(Profile);

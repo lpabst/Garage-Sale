@@ -1,0 +1,22 @@
+.itemDetailsModal{
+    width: 300px;
+    min-height: 300px;
+    height: fit-content;
+    border: 1px solid black;
+    background: #ddd;
+    box-shadow: 2px 2px 2px black;
+    border-radius: 4px;
+    position: fixed;
+    left: calc(50% - 150px);
+    top: 100px;
+    padding: 25px 10px 10px 10px;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.itemDetailsModal textarea{
+    width: 250px;
+    height: 120px;
+    resize: none;
+    outline: none;
+}

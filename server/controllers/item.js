@@ -74,6 +74,9 @@ function updateItemListing(req, res) {
     // I don't think we want to allow updates to ownership for an item
     delete updates.userid;
 
+    if (updates.description && updates.description.length > 255)
+        updates.description = udpates.description.substring(0, 255);
+
     return db.items.findOne({ id }, { fields: ['userid'] })
         .then(item => {
             if (loggedInUser.access_level < 10 && item.userid !== loggedInUser.id)
@@ -84,13 +87,23 @@ function updateItemListing(req, res) {
         .catch(e => sendError(res, e, 'updateItemListing'))
 }
 
-// send in the category, subcategory, description, & price
+// send in the gender, clothingType, age, price, description, & eligibleForClearance
 function createItemListing(req, res) {
     let db = req.app.get('db');
-    let { category, subcategory, description, price } = req.body;
+    let { gender, clothingType, age, price, description, eligibleForClearance } = req.body;
     let loggedInUser = req.session.user;
 
-    return db.items.insert({ category, subcategory, description, price, userid: loggedInUser.id })
+    if (description.length > 255) description = description.substring(0, 255);
+
+    return db.items.insert({
+        gender,
+        clothing_type: clothingType,
+        age,
+        price,
+        description,
+        eligible_for_clearance: eligibleForClearance,
+        userid: loggedInUser.id
+    })
         .then(item => sendSuccess(res, item))
         .catch(e => sendError(res, e, 'createItemListing'))
 }
