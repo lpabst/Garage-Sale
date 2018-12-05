@@ -82,7 +82,7 @@ function updateItemListing(req, res) {
             if (loggedInUser.access_level < 10 && item.userid !== loggedInUser.id)
                 return sendFailuer(res, 'Cannot edit another user\'s items')
             return db.items.update({ id }, updates)
-                .then(item => sendSuccess(res, item))
+                .then(items => sendSuccess(res, items[0]))
         })
         .catch(e => sendError(res, e, 'updateItemListing'))
 }
@@ -119,7 +119,7 @@ function deleteItemListing(req, res) {
             if (loggedInUser.access_level < 10 && item.userid !== loggedInUser.id)
                 return sendFailuer(res, 'Cannot delete another user\'s items')
             return db.items.destroy({ id })
-                .then(item => sendSuccess(res, item, 'Deleted successfully'))
+                .then(items => sendSuccess(res, items[0], 'Deleted successfully'))
         })
         .catch(e => sendError(res, e, 'deleteItemListing'))
 }

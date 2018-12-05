@@ -7,6 +7,30 @@ import { checkResponse } from './../../util/helpers';
 
 import ItemDetailsModal from './../../components/ItemDetailsModal/ItemDetailsModal';
 
+function sqlItemToJsItem(item) {
+  item.eligibleForClearance = item.eligible_for_clearance;
+  item.clothingType = item.clothing_type;
+  item.createdDate = item.created_date;
+  item.soldDate = item.sold_date;
+  delete item.eligible_for_clearance;
+  delete item.clothing_type;
+  delete item.created_date;
+  delete item.sold_date;
+  return item;
+}
+
+function jsItemToSqlItem(item) {
+  item.clothing_type = item.clothingType;
+  item.eligible_for_clearance = item.eligibleForClearance;
+  item.created_date = item.createdDate;
+  item.sold_date = item.soldDate;
+  delete item.clothingType;
+  delete item.eligibleForClearance;
+  delete item.createdDate;
+  delete item.soldDate;
+  return item;
+}
+
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -61,6 +85,8 @@ class Account extends Component {
       .then(({ data }) => checkResponse(data, this.props.history))
       .then(({ data }) => {
         if (!data || !data.items) return;
+        // converts snake case to camel case so we can work with camel case in the component
+        data.items.forEach(item => sqlItemToJsItem(item))
         return this.setState({
           items: data.items
         })
@@ -88,11 +114,7 @@ class Account extends Component {
   }
 
   openItemEditModal(i) {
-    let selectedItem = this.state.items[i];
-    selectedItem.eligibleForClearance = selectedItem.eligible_for_clearance;
-    selectedItem.clothingType = selectedItem.clothing_type;
-    delete selectedItem.eligible_for_clearance;
-    delete selectedItem.clothing_type;
+    let selectedItem = JSON.parse(JSON.stringify(this.state.items[i]));
     this.setState({
       editInfo: selectedItem,
       showEditModal: true
@@ -100,11 +122,7 @@ class Account extends Component {
   }
 
   openItemDeleteModal(i) {
-    let selectedItem = this.state.items[i];
-    selectedItem.eligibleForClearance = selectedItem.eligible_for_clearance;
-    selectedItem.clothingType = selectedItem.clothing_type;
-    delete selectedItem.eligible_for_clearance;
-    delete selectedItem.clothing_type;
+    let selectedItem = JSON.parse(JSON.stringify(this.state.items[i]));
     this.setState({
       deleteInfo: selectedItem,
       showDeleteModal: true
@@ -123,7 +141,15 @@ class Account extends Component {
     })
       .then(({ data }) => {
         if (data.success) return this.setState({
-          showCreateModal: false
+          showCreateModal: false,
+          createInfo: {
+            eligibleForClearance: true,
+            gender: 'girls',
+            clothingType: 'pants',
+            age: 10,
+            price: 5,
+            description: '',
+          }
         }, this.getUsersItems)
         return alert(data.message);
       })
@@ -131,19 +157,24 @@ class Account extends Component {
 
   editItemListing() {
     let { id } = this.state.editInfo;
-    let updates = this.state.editInfo;
-    updates.clothing_type = updates.clothingType;
-    updates.eligible_for_clearance = updates.eligibleForClearance;
-    delete updates.clothingType;
-    delete updates.eligibleForClearance;
+    let updates = jsItemToSqlItem(this.state.editInfo);
     return axios.post('/api/updateItemListing', {
       id,
       updates
     })
       .then(({ data }) => {
-        if (data.success) return this.setState({
-          showEditModal: false
-        }, this.getUsersItems)
+        if (data.success) {
+          let updatedItem = sqlItemToJsItem(data.data);
+          let items = this.state.items;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].id === updatedItem.id)
+              items[i] = updatedItem;
+          }
+          return this.setState({
+            showEditModal: false,
+            items
+          })
+        }
         return alert(data.message);
       })
   }
@@ -154,9 +185,18 @@ class Account extends Component {
       id
     })
       .then(({ data }) => {
-        if (data.success) return this.setState({
-          showDeleteModal: false
-        }, this.getUsersItems)
+        if (data.success) {
+          let deletedItem = data.data;
+          let items = this.state.items;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].id === deletedItem.id)
+              items.splice(i, 1);
+          }
+          return this.setState({
+            showDeleteModal: false,
+            items
+          })
+        }
         return alert(data.message);
       })
   }
@@ -186,11 +226,11 @@ class Account extends Component {
               return <tr key={i} style={{ background }} >
                 <td>{i + 1}</td>
                 <td>{item.gender}</td>
-                <td>{item.clothing_type}</td>
+                <td>{item.clothingType}</td>
                 <td>{item.age}</td>
                 <td>${item.price}.00</td>
                 <td>{item.description}</td>
-                <td>{JSON.stringify(item.eligible_for_clearance)}</td>
+                <td>{JSON.stringify(item.eligibleForClearance)}</td>
                 <td><button onClick={() => this.openItemEditModal(i)} >Update</button></td>
                 <td><button style={{ background: 'red' }} onClick={() => this.openItemDeleteModal(i)} >Delete</button></td>
               </tr>
