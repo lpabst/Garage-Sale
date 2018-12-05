@@ -17,16 +17,18 @@ values ('test@gmail.com', '******', 'admin', 10)
 create table items(
     id serial primary key,
     userid integer references users(id),
-    category varchar(255),
-    subcategory varchar(255),
-    description text,
+    gender varchar(255),
+    clothing_type varchar(255),
+    age varchar(255),
     price varchar(255),
+    description varchar(255),
+    eligible_for_clearance: boolean
     created_date timestamp default NOW(),
     sold boolean default false,
     sold_date timestamp
 )
 
-insert into items (userid, category, subcategory, description, price)
-values(1000019, 'pants', 'girls ages 5-6', 'lightly used pants', '9.99')
+insert into items (userid, gender, clothing_type, age, price, description)
+values(1000019, 'girls', 'sweater', '10', '5', 'lightly used sweater')
 
 

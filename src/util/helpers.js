@@ -4,6 +4,17 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
+function checkResponse(data, history) {
+    if (data.error || !data.success) {
+        if (data.message.match(/invalid session cookie | please log in/i)) {
+            return history.push('/login');
+        }
+        alert(data.message);
+    }
+    return data;
+}
+
 export {
-    validateEmail
+    validateEmail,
+    checkResponse
 }

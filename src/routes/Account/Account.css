@@ -1,7 +1,25 @@
 
-.home{
+.account{
     width: 100%;
     position: relative;
 }
 
+.itemsTable{
+    width: 500px;
+    border: 1px solid black;
+}
 
+.itemsTable td{
+    border: 1px solid black;
+}
+
+.inputByText{
+    width: 14px;
+    margin: 0;
+    display: inline-block;
+}
+
+.textByInput {
+    margin-left: 3px;
+    font-size: 12px;
+}
