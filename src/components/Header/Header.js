@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Header.css'
 import { Link, withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { isLoggedIn } from './../../util/session';
+import { isLoggedIn, getUserAccessLevel } from './../../util/session';
 
 class Header extends Component {
 
@@ -38,15 +38,16 @@ class Header extends Component {
     }
 
     navList() {
+        let accessLevel = getUserAccessLevel();
         return isLoggedIn()
-            ?
-            <ul className='nav-list'>
-                <li><Link to='/profile' >Profile</Link></li>
+            ? <ul className='nav-list'>
+                {accessLevel >= 10 && <li><Link to='/admin'>Admin</Link></li>}
+                {accessLevel >= 5 && <li><Link to='/cashier'>Cashier</Link></li>}
                 <li><Link to='/account' >Account</Link></li>
+                <li><Link to='/profile' >Profile</Link></li>
                 <li onClick={this.logout} >Logout</li>
             </ul>
-            :
-            <ul className='nav-list'>
+            : <ul className='nav-list'>
                 <li><Link to='/login' >Login</Link></li>
             </ul>
     }
