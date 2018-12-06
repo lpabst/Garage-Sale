@@ -5,6 +5,11 @@ function isLoggedIn() {
         localStorage.userId
 }
 
+function getUserAccessLevel() {
+    return Number(localStorage.accessLevel) || 1
+}
+
 export {
-    isLoggedIn
+    isLoggedIn,
+    getUserAccessLevel
 }
